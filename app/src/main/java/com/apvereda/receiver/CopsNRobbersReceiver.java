@@ -58,14 +58,22 @@ public class CopsNRobbersReceiver extends BroadcastReceiver {
                 if (!app.isCop()) {
                     if (!app.getTreasures().contains(intent.getStringExtra(CopsNRobbersApp.TREASUREID))) {
                         app.addTreasure(intent.getStringExtra(CopsNRobbersApp.TREASUREID));
-                        Log.i("Digital-Avatars", "Tesoro robado con id: " + intent.getStringExtra(intent.getStringExtra(CopsNRobbersApp.TREASUREID)));
+                        Log.i("Digital-Avatars", "Tesoro robado con id: " + intent.getStringExtra(CopsNRobbersApp.TREASUREID));
                         Toast toast1 = Toast.makeText(context,
-                                "Tesoro robado con id: " + intent.getStringExtra(intent.getStringExtra(CopsNRobbersApp.TREASUREID)), Toast.LENGTH_LONG);
+                                "Tesoro robado con id: " + intent.getStringExtra(CopsNRobbersApp.TREASUREID), Toast.LENGTH_LONG);
                         toast1.show();
+                        Intent i = new Intent(CopsNRobbersApp.EV_STATUS);
+                        i.putExtra("message", "Treasure stolen with ID "+ intent.getStringExtra(CopsNRobbersApp.TREASUREID));
+                        SiddhiAppService.getServiceInstance().sendBroadcast(i);
+                        if(app.getN_trs() == 0){
+                            i = new Intent(CopsNRobbersApp.EV_STATUS);
+                            i.putExtra("message", "Game Over. Robbers Win!");
+                            SiddhiAppService.getServiceInstance().sendBroadcast(i);
+                        }
                     } else {
-                        Log.i("Digital-Avatars", "Este tesoro ya fue robado id: " + intent.getStringExtra(intent.getStringExtra(CopsNRobbersApp.TREASUREID)));
+                        Log.i("Digital-Avatars", "Este tesoro ya fue robado id: " + intent.getStringExtra(CopsNRobbersApp.TREASUREID));
                         Toast toast1 = Toast.makeText(context,
-                                "Ya robaste este tesoro antes con id: " + intent.getStringExtra(intent.getStringExtra(CopsNRobbersApp.TREASUREID)), Toast.LENGTH_LONG);
+                                "Ya robaste este tesoro antes con id: " + intent.getStringExtra(CopsNRobbersApp.TREASUREID), Toast.LENGTH_LONG);
                         toast1.show();
                     }
                 }
@@ -84,6 +92,9 @@ public class CopsNRobbersReceiver extends BroadcastReceiver {
                     Toast toast1 = Toast.makeText(context,
                             "Ladron arrestado: " + intent.getStringExtra("robber"), Toast.LENGTH_LONG);
                     toast1.show();
+                    i = new Intent(CopsNRobbersApp.EV_STATUS);
+                    i.putExtra("message", "Ladron arrestado id: " + intent.getStringExtra("robber"));
+                    SiddhiAppService.getServiceInstance().sendBroadcast(i);
                 }
             }
         }

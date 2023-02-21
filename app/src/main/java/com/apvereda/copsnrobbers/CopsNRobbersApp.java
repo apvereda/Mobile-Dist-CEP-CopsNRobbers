@@ -19,10 +19,14 @@ public class CopsNRobbersApp {
     public static final String EV_COPDETECTED ="CopsNRobbers_CopDetected"; //User receives proposal from a contact
     public static final String EV_ROBBERDETECTED ="CopsNRobbers_RobberDetected"; //User receives proposal from a contact
     public static final String EV_TREASUREDETECTED ="CopsNRobbers_TreasureDetected"; //User receives proposal from a contact
+    public static final String EV_STATUS ="CopsNRobbers_inStatus"; //User receives status of the game
+
+    public static final int N_TREASURES = 5;
 
 
     private List<String> treasures = new ArrayList<>();
     private boolean iscop;
+    private int n_trs;
     private static CopsNRobbersApp app;
 
     public static CopsNRobbersApp getApp(boolean iscop){
@@ -35,9 +39,14 @@ public class CopsNRobbersApp {
     private CopsNRobbersApp(boolean iscop){
         treasures = new ArrayList<>();
         this.iscop = iscop;
+        n_trs = N_TREASURES;
     }
 
     public boolean isCop() { return iscop; }
+
+    public int getN_trs() {
+        return n_trs;
+    }
 
     public List<String> getTreasures() {
         return treasures;

@@ -200,6 +200,16 @@ public class HomeFragment extends Fragment {
                 "@attributes(sender='sender', message='message')))" +
                 "define stream arrested(sender String, message String);"+
 
+                "@source(type='android-broadcast', identifier='CopsNRobbers_inStatus'," +
+                "@map(type='keyvalue',fail.on.missing.attribute='false'," +
+                "@attributes( message='message')))" +
+                "define stream inStatus(message String);" +
+
+                "@source(type='android-message', appid ='CopsNRobbers_Status'," +
+                "@map(type='keyvalue',fail.on.missing.attribute='false'," +
+                "@attributes(sender='sender', message='message')))" +
+                "define stream receiveStatus(sender String, message String);"+
+
 
 
                 "@sink(type='android-broadcast' , identifier='CopsNRobbers_BeaconReceived', " +
@@ -222,20 +232,26 @@ public class HomeFragment extends Fragment {
                 "@map(type='keyvalue'))" +
                 "define stream arrestedNotification (sender String, message String); " +
 
+                "@sink(type='android-notification', title='Status',multiple.notifications = 'true'," +
+                "@map(type='keyvalue'))" +
+                "define stream statusNotification (sender String, message String); " +
+
+                "@sink(type='android-message' , appid='CopsNRobbers_Status', recipients='Relations'," +
+                "@map(type='keyvalue'))"+
+                "define stream sendStatus(message String); " +
+
 
                 "from receiveBeacon select * insert into beaconReceived;"+
                 "from not copDetected for 2 min and e1=treasureDetected select e1.id as treasureId insert into treasureStolen;" +
-                //"from e1=treasureDetected -> not e2=copDetected<2:> for '1 min' select e1.id as treasureId insert into treasureStolen;"+
-                //"from e1=robberDetected -> e2=copDetected within 1 min select e1.onesignalid as robberId e1.user as robber insert into robberArrested"+
                 "from r1=robberDetected -> e2=copDetected within 1 min select r1.onesignalid as robberId insert into robberArrested;"+
                 "from arrest select * insert into arrestMessage;"+
-                "from arrested select * insert into arrestedNotification;"+
-
-                "from receiveBeacon select * insert into beacon;"+
+                "from inStatus select * insert into sendStatus;"+
+                "from receiveStatus select * insert into statusNotification;"+
                 "from arrested select * insert into arrestedNotification;";
 
 
-        apps.add(appTest);
+
+        apps.add(app);
         copsNRobbersReceiver = new CopsNRobbersReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CopsNRobbersApp.EV_BEACONRECEIVED);
